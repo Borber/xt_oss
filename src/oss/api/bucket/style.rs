@@ -11,12 +11,12 @@ pub mod builders {
     };
 
     pub struct PutStyleBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         style: Style,
     }
 
     impl<'a> PutStyleBuilder<'a> {
-        pub fn new(client: &'a oss::Client<'a>) -> Self {
+        pub fn new(client: &'a oss::Client) -> Self {
             Self {
                 client,
                 style: Style::default(),
@@ -75,11 +75,11 @@ pub mod builders {
     }
 
     pub struct ListStyleBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> ListStyleBuilder<'a> {
-        pub fn new(client: &'a oss::Client<'a>) -> Self {
+        pub fn new(client: &'a oss::Client) -> Self {
             Self { client }
         }
 
@@ -99,12 +99,12 @@ pub mod builders {
     }
 
     pub struct GetStyleBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         name: &'a str,
     }
 
     impl<'a> GetStyleBuilder<'a> {
-        pub fn new(client: &'a oss::Client<'a>, name: &'a str) -> Self {
+        pub fn new(client: &'a oss::Client, name: &'a str) -> Self {
             Self { client, name }
         }
 
@@ -136,12 +136,12 @@ pub mod builders {
     }
 
     pub struct DeleteStyleBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         name: &'a str,
     }
 
     impl<'a> DeleteStyleBuilder<'a> {
-        pub fn new(client: &'a oss::Client<'a>, name: &'a str) -> Self {
+        pub fn new(client: &'a oss::Client, name: &'a str) -> Self {
             Self { client, name }
         }
 
@@ -175,7 +175,7 @@ pub mod builders {
 
 /// # 图片样式`Style`
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用PutStyle接口新增图片样式。一个图片样式中可以包含单个或多个图片处理参数
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putstyle)
@@ -188,7 +188,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/deletestyle)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_bucket_style_get.rs)
-    pub fn GetStyle(&self, name: &'a str) -> GetStyleBuilder {
+    pub fn GetStyle<'a>(&'a self, name: &'a str) -> GetStyleBuilder {
         GetStyleBuilder::new(self, name)
     }
 
@@ -204,7 +204,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/deletestyle)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_bucket_style_del.rs)
-    pub fn DeleteStyle(&self, name: &'a str) -> DeleteStyleBuilder {
+    pub fn DeleteStyle<'a>(&'a self, name: &'a str) -> DeleteStyleBuilder {
         DeleteStyleBuilder::new(self, name)
     }
 }

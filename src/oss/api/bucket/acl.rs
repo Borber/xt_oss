@@ -7,7 +7,7 @@ use crate::oss::{
 
 #[derive(Debug)]
 pub struct PutBucketAclBuilder<'a> {
-    client: &'a oss::Client<'a>,
+    client: &'a oss::Client,
     acl: OssAcl,
 }
 
@@ -40,7 +40,7 @@ impl<'a> PutBucketAclBuilder<'a> {
 }
 
 pub struct GetBucketAclBuilder<'a> {
-    client: &'a oss::Client<'a>,
+    client: &'a oss::Client,
 }
 
 impl<'a> GetBucketAclBuilder<'a> {
@@ -66,7 +66,7 @@ impl<'a> GetBucketAclBuilder<'a> {
 
 /// # 权限控制`ACL``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// PutBucketAcl接口用于设置或修改存储空间`Bucket`的访问权限`ACL`。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putbucketacl)

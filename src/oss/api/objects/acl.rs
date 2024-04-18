@@ -10,7 +10,7 @@ pub mod builders {
     };
 
     pub struct PutObjectACLBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
         acl: ObjectACL,
@@ -63,7 +63,7 @@ pub mod builders {
     }
 
     pub struct GetObjectAclBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
     }
@@ -105,13 +105,13 @@ pub mod builders {
 
 /// # 基础操作
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用PutObjectACL接口修改文件`Object`的访问权限`ACL`。
     /// 此操作只有Bucket Owner有权限执行,且需对Object有读写权限。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putobjectacl)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_acl_put.rs)
-    pub fn PutObjectACL(&self, object: &'a str) -> PutObjectACLBuilder {
+    pub fn PutObjectACL<'a>(&'a self, object: &'a str) -> PutObjectACLBuilder {
         PutObjectACLBuilder::new(self, object)
     }
 
@@ -119,7 +119,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/getobjectacl)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_acl_get.rs)
-    pub fn GetObjectACL(&self, object: &'a str) -> GetObjectAclBuilder {
+    pub fn GetObjectACL<'a>(&'a self, object: &'a str) -> GetObjectAclBuilder {
         GetObjectAclBuilder::new(self, object)
     }
 }

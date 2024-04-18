@@ -12,7 +12,7 @@ pub mod builders {
     };
 
     pub struct PutBucketTransferAccelerationBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         enabled: Option<bool>,
     }
 
@@ -48,7 +48,7 @@ pub mod builders {
 
     //----------------------------------------------
     pub struct GetBucketTransferAccelerationBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketTransferAccelerationBuilder<'a> {
@@ -75,7 +75,7 @@ pub mod builders {
 
 /// # 传输加速`TransferAcceleration``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 接口用于为存储空间（Bucket）配置传输加速。开启传输加速后，可提升全球各地用户对OSS的访问速度，
     /// 适用于远距离数据传输、GB或TB级大文件上传和下载的场景。
     ///

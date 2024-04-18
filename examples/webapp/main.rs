@@ -18,7 +18,7 @@ mod pages {
         name: String,
     }
 
-    pub(crate) async fn index(State(state): State<Arc<AppState<'_>>>) -> Html<String> {
+    pub(crate) async fn index(State(state): State<Arc<AppState>>) -> Html<String> {
         let result = state
             .oss_client
             .ListBuckets()
@@ -33,7 +33,7 @@ mod pages {
     }
 
     pub(super) async fn describe_regions(
-        State(state): State<Arc<AppState<'_>>>,
+        State(state): State<Arc<AppState>>,
     ) -> Json<RegionInfoList> {
         let result = state.oss_client.DescribeRegions().execute().await.unwrap();
         if let Ok(data) = result {
@@ -44,7 +44,7 @@ mod pages {
     }
 
     pub(super) async fn buckets(
-        State(state): State<Arc<AppState<'_>>>,
+        State(state): State<Arc<AppState>>,
     ) -> Json<ListAllMyBucketsResult> {
         let result = state.oss_client.ListBuckets().execute().await.unwrap();
         if let Ok(data) = result {
@@ -56,12 +56,12 @@ mod pages {
 }
 
 #[derive(Debug)]
-struct AppState<'a> {
-    oss_client: oss::Client<'a>,
+struct AppState {
+    oss_client: oss::Client,
     template: Tera,
 }
 
-impl<'a> AppState<'a> {
+impl AppState {
     fn new() -> Self {
         let template_dir = {
             let mut root_dir = env::current_dir().unwrap();

@@ -30,7 +30,7 @@ pub mod builders {
 
     #[derive(Debug)]
     pub struct PutSymlinkBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
         symlink_target: &'a str,
@@ -184,7 +184,7 @@ pub mod builders {
     }
 
     pub struct GetSymlinkBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
     }
@@ -227,13 +227,13 @@ pub mod builders {
 
 /// # 软链接`Symlink``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用PutSymlink接口用于为OSS的目标文件`TargetObject`创建软链接
     /// `Symlink`,您可以通过该软链接访问TargetObject。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putsymlink)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_symlink_put.rs)
-    pub fn PutSymlink(&self, object: &'a str) -> PutSymlinkBuilder<'_> {
+    pub fn PutSymlink<'a>(&'a self, object: &'a str) -> PutSymlinkBuilder<'_> {
         PutSymlinkBuilder::new(self, object)
     }
 
@@ -241,7 +241,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/getsymlink)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_symlink_get.rs)
-    pub fn GetSymlink(&self, object: &'a str) -> GetSymlinkBuilder<'_> {
+    pub fn GetSymlink<'a>(&'a self, object: &'a str) -> GetSymlinkBuilder<'_> {
         GetSymlinkBuilder::new(self, object)
     }
 }

@@ -15,7 +15,7 @@ pub mod builders {
     };
 
     pub struct InitiateBucketWormBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         days: i32,
     }
 
@@ -57,7 +57,7 @@ pub mod builders {
     }
 
     pub struct AbortBucketWormBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> AbortBucketWormBuilder<'a> {
@@ -83,7 +83,7 @@ pub mod builders {
     }
 
     pub struct ExtendBucketWormBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         worm_id: &'a str,
         days: u32,
     }
@@ -141,7 +141,7 @@ pub mod builders {
     }
 
     pub struct CompleteBucketWormBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         worm_id: &'a str,
     }
 
@@ -168,7 +168,7 @@ pub mod builders {
     }
 
     pub struct GetBucketWormBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketWormBuilder<'a> {
@@ -195,7 +195,7 @@ pub mod builders {
 
 /// # 合规保留策略`WORM``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用InitiateBucketWorm接口新建一条合规保留策略。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/initiatebucketworm)
@@ -219,7 +219,7 @@ impl<'a> oss::Client<'a> {
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/completebucketworm)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_bucket_worm_complete.rs)
     #[allow(non_snake_case)]
-    pub fn CompleteBucketWorm(&self, worm_id: &'a str) -> CompleteBucketWormBuilder {
+    pub fn CompleteBucketWorm<'a>(&'a self, worm_id: &'a str) -> CompleteBucketWormBuilder {
         CompleteBucketWormBuilder::new(self, worm_id)
     }
 
@@ -227,7 +227,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/extendbucketworm)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_bucket_worm_extend.rs)
-    pub fn ExtendBucketWorm(&self, worm_id: &'a str) -> ExtendBucketWormBuilder {
+    pub fn ExtendBucketWorm<'a>(&'a self, worm_id: &'a str) -> ExtendBucketWormBuilder {
         ExtendBucketWormBuilder::new(self, worm_id)
     }
 

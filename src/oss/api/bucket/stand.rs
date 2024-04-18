@@ -24,7 +24,7 @@ pub mod builders {
 
     #[derive(Debug)]
     pub struct PutBucketBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         region: Option<&'a str>,
         bucket: Option<&'a str>,
         acl: Option<OssAcl>,
@@ -98,7 +98,7 @@ pub mod builders {
 
         /// 调用PutBucket接口创建存储空间（Bucket）。
         pub async fn execute(&self) -> api::ApiResult {
-            let region = self.region.unwrap_or(self.client.options.region);
+            let region = self.region.unwrap_or(self.client.options.region.as_str());
             let bucket = self.bucket.unwrap_or(self.client.bucket());
             let res = format!("/{}/", bucket);
             let url = format!(
@@ -136,7 +136,7 @@ pub mod builders {
     }
 
     pub struct DeleteBucketBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         region: Option<&'a str>,
         bucket: Option<&'a str>,
     }
@@ -161,7 +161,7 @@ pub mod builders {
         }
 
         pub async fn execute(&self) -> api::ApiResult {
-            let region = self.region.unwrap_or(self.client.options.region);
+            let region = self.region.unwrap_or(self.client.options.region.as_str());
             let bucket = self.bucket.unwrap_or(self.client.bucket());
             let res = format!("/{}/", bucket);
             let url = format!(
@@ -225,7 +225,7 @@ pub mod builders {
     }
 
     pub struct ListObjectBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         query: ListObjectQuery<'a>,
     }
 
@@ -323,7 +323,7 @@ pub mod builders {
     }
 
     pub struct ListObjectsV2Builder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         query: ListObjectsV2Query<'a>,
     }
 
@@ -396,7 +396,7 @@ pub mod builders {
     }
 
     pub struct GetBucketInfoBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         bucket: Option<&'a str>,
     }
 
@@ -446,7 +446,7 @@ pub mod builders {
     }
 
     pub struct GetBucketLocationBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         bucket: Option<&'a str>,
     }
 
@@ -464,7 +464,7 @@ pub mod builders {
         }
 
         pub async fn execute(&self) -> api::ApiResult<LocationConstraint> {
-            let region = self.client.options.region;
+            let region = self.client.options.region.as_str();
             let bucket = self.bucket.unwrap_or(self.client.bucket());
             let res = format!("/{}/?location", bucket);
             let url = format!(
@@ -496,7 +496,7 @@ pub mod builders {
     }
 
     pub struct GetBucketStatBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         region: Option<&'a str>,
         bucket: Option<&'a str>,
     }
@@ -521,7 +521,7 @@ pub mod builders {
         }
 
         pub async fn execute(&self) -> api::ApiResult<BucketStat> {
-            let region = self.region.unwrap_or(self.client.options.region);
+            let region = self.region.unwrap_or(self.client.options.region.as_str());
             let bucket = self.bucket.unwrap_or(self.client.bucket());
             let res = format!("/{}/?stat", bucket);
             let url = format!(
@@ -556,7 +556,7 @@ pub mod builders {
 
 /// # 基础操作
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用PutBucket接口创建存储空间`Bucket`。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putbucket)

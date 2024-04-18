@@ -13,7 +13,7 @@ pub mod builders {
     };
 
     pub struct PutBucketWebsiteBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         config: WebsiteConfiguration,
     }
 
@@ -57,7 +57,7 @@ pub mod builders {
     }
 
     pub struct GetBucketWebsiteBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketWebsiteBuilder<'a> {
@@ -81,7 +81,7 @@ pub mod builders {
     }
 
     pub struct DeleteBucketWebsiteBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> DeleteBucketWebsiteBuilder<'a> {
@@ -108,7 +108,7 @@ pub mod builders {
 
 /// # 静态网站`Website``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用PutBucketWebsite接口将存储空间`Bucket`设置为静态网站托管模式并设置跳
     /// 转规则`RoutingRule`。
     ///

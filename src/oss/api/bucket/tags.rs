@@ -13,7 +13,7 @@ pub mod builders {
     };
 
     pub struct PutBucketTagsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         tags: HashMap<&'a str, &'a str>,
     }
 
@@ -69,7 +69,7 @@ pub mod builders {
     }
 
     pub struct GetBucketTagsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketTagsBuilder<'a> {
@@ -92,7 +92,7 @@ pub mod builders {
         }
     }
     pub struct DeleteBucketTagsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         keys: Vec<&'a str>,
     }
 
@@ -136,7 +136,7 @@ pub mod builders {
 
 /// # 标签`Tags``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// PutBucketTags接口用来给某个存储空间`Bucket`添加或修改标签。
     ///
     /// - [official docs]()

@@ -18,7 +18,7 @@ pub mod builders {
     };
 
     pub struct PutBucketCorsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         config: CORSConfiguration,
     }
 
@@ -57,7 +57,7 @@ pub mod builders {
     }
 
     pub struct GetBucketCorsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketCorsBuilder<'a> {
@@ -83,7 +83,7 @@ pub mod builders {
     }
 
     pub struct DeleteBucketCorsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> DeleteBucketCorsBuilder<'a> {
@@ -110,7 +110,7 @@ pub mod builders {
     }
 
     pub struct OptionsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         origin: &'a str,
         request_method: http::Method,
@@ -180,7 +180,7 @@ pub mod builders {
 
 /// # 跨域资源共享（CORS）
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用PutBucketCors接口为指定的存储空间`Bucket`设置跨域资源共享CORS
     ///`Cross-Origin Resource Sharing`规则
     ///
@@ -214,7 +214,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/options)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_bucket_cors_options.rs)
-    pub fn Options(&self, object: &'a str) -> OptionsBuilder {
+    pub fn Options<'a>(&'a self, object: &'a str) -> OptionsBuilder {
         OptionsBuilder::new(&self, object)
     }
 }

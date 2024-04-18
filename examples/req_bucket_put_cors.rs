@@ -36,7 +36,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_access_key_id(&access_key_id)
         .with_access_key_secret(&access_key_secret)
         .task()
-        .with_url(&url)
+        .with_url(url)
         .with_resource("/xtoss-ex10/?cors")
         .with_method(oss::http::Method::PUT)
         .with_body(data)

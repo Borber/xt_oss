@@ -14,7 +14,7 @@ pub mod builders {
     };
 
     pub struct PutBucketLifecycleBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         config: LifecycleConfiguration,
     }
 
@@ -53,7 +53,7 @@ pub mod builders {
     }
 
     pub struct GetBucketLifecycleBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketLifecycleBuilder<'a> {
@@ -78,7 +78,7 @@ pub mod builders {
     }
 
     pub struct DeleteBucketLifecycleBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> DeleteBucketLifecycleBuilder<'a> {
@@ -107,7 +107,7 @@ pub mod builders {
 
 /// # 生命周期`Lifecycle``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 您可以基于最后一次修改时间以及最后一次访问时间的策略创建生命周期规则，定期将存储空间
     /// `Bucket`内的多个文件`Object`转储为指定存储类型,或者将过期的Object和碎片删除,
     /// 从而节省存储费用。本文为您介绍如何调用PutBucketLifecycle接口为存储空间`Bucket``

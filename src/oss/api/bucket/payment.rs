@@ -7,7 +7,7 @@ pub mod builders {
         entities::payment::{Payer, RequestPaymentConfiguration},
     };
     pub struct PutBucketRequestPaymentBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         config: RequestPaymentConfiguration,
     }
 
@@ -43,7 +43,7 @@ pub mod builders {
     }
 
     pub struct GetBucketRequestPaymentBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketRequestPaymentBuilder<'a> {
@@ -74,7 +74,7 @@ use crate::oss::{self, entities::payment::Payer};
 use self::builders::{GetBucketRequestPaymentBuilder, PutBucketRequestPaymentBuilder};
 /// # 请求者付费`RequestPayment`
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// PutBucketRequestPayment接口用于设置请求者付费模式。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putbucketrequestpayment)

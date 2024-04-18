@@ -7,6 +7,7 @@ pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const GMT_DATE_FMT: &str = "%a, %d %b %Y %H:%M:%S GMT";
 pub const XML_CONTENT: &str = r#"<?xml version="1.0" encoding="UTF-8"?>"#;
 
+use std::borrow::Cow;
 pub use bytes::{Bytes, BytesMut};
 use std::time::Duration;
 pub mod api;
@@ -22,16 +23,16 @@ use chrono::Utc;
 use reqwest::{header::HeaderMap, Response, Result};
 
 pub struct RequestTask<'a> {
-    request: &'a oss::Request<'a>,
-    url: &'a str,
-    resource: Option<&'a str>,
+    request: &'a oss::Request,
+    url: String,
+    resource: Option<String>,
     method: http::Method,
     headers: http::HeaderMap,
     body: Bytes,
 }
 
 impl<'a> RequestTask<'a> {
-    pub(crate) fn new(request: &'a oss::Request<'a>) -> Self {
+    pub(crate) fn new(request: &'a oss::Request) -> Self {
         Self {
             request,
             url: Default::default(),
@@ -42,13 +43,13 @@ impl<'a> RequestTask<'a> {
         }
     }
 
-    pub fn with_url(mut self, value: &'a str) -> Self {
-        self.url = value;
+    pub fn with_url<T:Into<String>>(mut self, value: T) -> Self {
+        self.url = value.into();
         self
     }
 
-    pub fn with_resource(mut self, value: &'a str) -> Self {
-        self.resource = Some(value);
+    pub fn with_resource<T:Into<String>>(mut self, value: T) -> Self {
+        self.resource = Some(value.into());
         self
     }
 
@@ -76,10 +77,10 @@ impl<'a> RequestTask<'a> {
     }
 
     fn authorization(&self, headers: &HeaderMap, date: &String) -> String {
-        let access_key_id = self.request.access_key_id.unwrap_or_default();
-        let access_key_secret = self.request.access_key_secret.unwrap_or_default();
-        let sts_token = self.request.sts_token;
-        let resourse = self.resource;
+        let access_key_id = self.request.access_key_id.as_ref().map(|i|i.as_str()).unwrap_or_default();
+        let access_key_secret = self.request.access_key_secret.as_ref().map(|i|i.as_str()).unwrap_or_default();
+        let sts_token = self.request.sts_token.as_ref().map(|i|i.as_str());
+        let resourse = self.resource.as_ref().map(|i|i.as_str());
         auth::SingerV1 {
             access_key_id,
             access_key_secret,
@@ -96,7 +97,7 @@ impl<'a> RequestTask<'a> {
         let date = Utc::now().format(oss::GMT_DATE_FMT).to_string();
         let mut headers = http::HeaderMap::new();
         headers.insert(DATE, date.parse().unwrap());
-        if let Some(sts_token) = self.request.sts_token {
+        if let Some(sts_token) = self.request.sts_token.as_ref().map(|i|i.as_str()) {
             headers.insert("x-oss-security-token", sts_token.parse().unwrap());
         }
         headers.extend(self.headers.to_owned());
@@ -106,7 +107,7 @@ impl<'a> RequestTask<'a> {
         let timeout = Duration::from_secs(timeout.unwrap_or(oss::DEFAULT_TIMEOUT));
         self.request
             .client
-            .request(self.method.to_owned(), self.url)
+            .request(self.method.to_owned(), &self.url)
             .headers(headers)
             .timeout(timeout)
             .body(self.body.to_owned())
@@ -116,14 +117,14 @@ impl<'a> RequestTask<'a> {
 }
 
 #[derive(Debug, Default, Clone)]
-pub struct Request<'a> {
-    access_key_id: Option<&'a str>,
-    access_key_secret: Option<&'a str>,
-    sts_token: Option<&'a str>,
+pub struct Request {
+    access_key_id: Option<String>,
+    access_key_secret: Option<String>,
+    sts_token: Option<String>,
     client: reqwest::Client,
 }
 
-impl<'a> Request<'a> {
+impl Request {
     pub fn new() -> Self {
         let mut headers = http::HeaderMap::new();
         headers.insert(
@@ -142,18 +143,18 @@ impl<'a> Request<'a> {
         }
     }
 
-    pub fn with_access_key_id(mut self, value: &'a str) -> Self {
-        self.access_key_id = Some(value);
+    pub fn with_access_key_id<T:Into<String>>(mut self, value: T) -> Self {
+        self.access_key_id = Some(value.into());
         self
     }
 
-    pub fn with_access_key_secret(mut self, value: &'a str) -> Self {
-        self.access_key_secret = Some(value);
+    pub fn with_access_key_secret<T:Into<String>>(mut self, value: T) -> Self {
+        self.access_key_secret = Some(value.into());
         self
     }
 
-    pub fn with_sts_token(mut self, value: Option<&'a str>) -> Self {
-        self.sts_token = value;
+    pub fn with_sts_token<T:Into<String>>(mut self, value: Option<T>) -> Self {
+        self.sts_token = value.map(|v| v.into());
         self
     }
 
@@ -162,20 +163,20 @@ impl<'a> Request<'a> {
     }
 }
 
-#[derive(Debug, Clone, Default, Copy)]
-pub struct Options<'a> {
+#[derive(Debug, Clone, Default)]
+pub struct Options {
     /// 通过阿里云控制台创建的AccessKey ID
-    access_key_id: &'a str,
+    access_key_id: String,
     /// 通过阿里云控制台创建的AccessKey Secret
-    access_key_secret: &'a str,
+    access_key_secret: String,
     /// 使用临时授权方式
-    sts_token: &'a str,
+    sts_token: String,
     /// 通过控制台或PutBucket创建的Bucket
-    bucket: &'a str,
+    bucket: String,
     /// OSS访问域名。
-    endpoint: &'a str,
+    endpoint: String,
     /// Bucket所在的区域,默认值为oss-cn-hangzhou
-    region: &'a str,
+    region: String,
     /// 是否使用阿里云内网访问,默认值为false
     internal: bool,
     /// 是否支持上传自定义域名,默认值为false
@@ -188,10 +189,16 @@ pub struct Options<'a> {
     timeout: u64,
 }
 
-impl<'a> Options<'a> {
+impl AsRef<Options> for Options{
+    fn as_ref(&self) -> &Options {
+        &self
+    }
+}
+
+impl Options {
     pub fn new() -> Self {
         Self {
-            region: oss::DEFAULT_REGION,
+            region: oss::DEFAULT_REGION.into(),
             internal: false,
             cname: false,
             // is_request_pay: false,
@@ -201,36 +208,37 @@ impl<'a> Options<'a> {
         }
     }
 
-    pub fn with_access_key_id(mut self, value: &'a str) -> Self {
-        self.access_key_id = value;
+    pub fn with_access_key_id<T: Into<String>>(mut self, value: T) -> Self {
+        self.access_key_id = value.into();
         self
     }
 
-    pub fn with_access_key_secret(mut self, value: &'a str) -> Self {
-        self.access_key_secret = value;
+    pub fn with_access_key_secret<T: Into<String>>(mut self, value: T) -> Self {
+        self.access_key_secret = value.into();
         self
     }
 
-    pub fn with_bucket(mut self, value: &'a str) -> Self {
-        self.bucket = value;
+    pub fn with_bucket<T: Into<String>>(mut self, value: T) -> Self {
+        self.bucket = value.into();
         self
     }
 
-    pub fn with_region(mut self, value: &'a str) -> Self {
-        self.region = value;
+    pub fn with_region<T: Into<String>>(mut self, value: T) -> Self {
+        self.region = value.into();
         self
     }
 
-    pub fn with_sts_token(mut self, value: &'a str) -> Self {
-        self.sts_token = value;
+    pub fn with_sts_token<T: Into<String>>(mut self, value: T) -> Self {
+        self.sts_token = value.into();
         self
     }
 
-    pub fn with_endpoint(mut self, value: &'a str) -> Self {
+    pub fn with_endpoint<T: Into<String>>(mut self, value: T) -> Self {
+        let value = value.into();
         self.endpoint = if let Some(v) = value.strip_prefix("http://") {
-            v
+            v.to_owned()
         } else if let Some(v) = value.strip_prefix("https://") {
-            v
+            v.to_owned()
         } else {
             value
         };
@@ -288,8 +296,8 @@ impl<'a> Options<'a> {
         }
     }
 
-    pub fn object_url(&self, object: &'a str) -> String {
-        format!("{}/{}", self.base_url(), object)
+    pub fn object_url<T: AsRef<str>>(&self, object: T) -> String {
+        format!("{}/{}", self.base_url(), object.as_ref())
     }
 
     fn schema(&self) -> String {
@@ -320,23 +328,23 @@ impl<'a> Options<'a> {
         }
     }
 
-    pub fn client(self) -> oss::Client<'a> {
+    pub fn client<'a>(self) -> oss::Client {
         oss::Client::new(self)
     }
 }
 
 #[derive(Debug, Default, Clone)]
-pub struct Client<'a> {
-    options: Options<'a>,
-    request: Request<'a>,
+pub struct Client {
+    options: Options,
+    request: Request,
 }
 
-impl<'a> Client<'a> {
-    pub fn new(options: Options<'a>) -> Self {
+impl Client {
+    pub fn new(options: Options) -> Self {
         let request = self::Request::new()
-            .with_access_key_id(options.access_key_id)
-            .with_access_key_secret(options.access_key_secret)
-            .with_sts_token((!options.sts_token.is_empty()).then_some(options.sts_token));
+            .with_access_key_id(&options.access_key_id)
+            .with_access_key_secret(options.access_key_secret.as_str())
+            .with_sts_token((!options.sts_token.is_empty()).then_some(options.sts_token.as_str()));
         Self { options, request }
     }
 
@@ -344,12 +352,12 @@ impl<'a> Client<'a> {
         &self.options
     }
 
-    pub fn region(&self) -> &'a str {
-        self.options.region
+    pub fn region(&self) -> &str {
+        self.options.region.as_str()
     }
 
-    pub fn bucket(&self) -> &'a str {
-        self.options.bucket
+    pub fn bucket(&self) -> &str {
+        self.options.bucket.as_str()
     }
 
     pub fn root_url(&self) -> String {
@@ -360,7 +368,7 @@ impl<'a> Client<'a> {
         self.options.base_url()
     }
 
-    pub fn object_url(&self, object: &'a str) -> String {
+    pub fn object_url<'a>(&'a self, object: &'a str) -> String {
         self.options.object_url(object)
     }
 

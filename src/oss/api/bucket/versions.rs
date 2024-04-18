@@ -17,7 +17,7 @@ pub mod builders {
     };
 
     pub struct PutBucketVersioningBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         status: VersioningStatus,
     }
 
@@ -51,7 +51,7 @@ pub mod builders {
     }
 
     pub struct GetBucketVersioningBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketVersioningBuilder<'a> {
@@ -94,7 +94,7 @@ pub mod builders {
     }
 
     pub struct ListObjectVersionsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         query: ListObjectVersionsQuery<'a>,
     }
 
@@ -156,7 +156,7 @@ pub mod builders {
 
 /// # 版本控制`Versioning``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用PutBucketVersioning设置指定存储空间`Bucket`的版本控制状态。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putbucketversioning)

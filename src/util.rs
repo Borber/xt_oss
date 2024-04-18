@@ -5,8 +5,9 @@ use std::{
 };
 
 use base64::{engine::general_purpose, Engine as _};
+use chksum_md5::Error;
 use chrono::{DateTime, Local, Utc};
-use crypto::{digest::Digest, md5::Md5};
+// use crypto::{digest::Digest, md5::Md5};
 use oss::http;
 
 use crate::oss;
@@ -101,14 +102,14 @@ impl fmt::Display for AllowedHeaderItem {
     }
 }
 
-pub fn options_from_env() -> oss::Options<'static> {
+pub fn options_from_env() -> oss::Options {
     oss::Options::new()
-        .with_access_key_id(get_env("OSS_ACCESS_KEY_ID", "").leak())
-        .with_access_key_secret(get_env("OSS_ACCESS_KEY_SECRET", "").leak())
-        .with_region(get_env("OSS_REGION", oss::DEFAULT_REGION).leak())
-        .with_endpoint(get_env("OSS_ENDPOINT", "").leak())
-        .with_bucket(get_env("OSS_BUCKET", "").leak())
-        .with_sts_token(get_env("OSS_STS_TOKEN", "").leak())
+        .with_access_key_id(get_env("OSS_ACCESS_KEY_ID", ""))
+        .with_access_key_secret(get_env("OSS_ACCESS_KEY_SECRET", ""))
+        .with_region(get_env("OSS_REGION", oss::DEFAULT_REGION))
+        .with_endpoint(get_env("OSS_ENDPOINT", ""))
+        .with_bucket(get_env("OSS_BUCKET", ""))
+        .with_sts_token(get_env("OSS_STS_TOKEN", ""))
         .with_internal(get_env_bool("OSS_INTERNAL", false))
         .with_cname(get_env_bool("OSS_CNAME", false))
         // .with_is_request_pay(get_env_bool("OSS_IS_REQUEST_PAY", false))
@@ -125,24 +126,37 @@ pub fn options_from_env() -> oss::Options<'static> {
 /// [doc](https://help.aliyun.com/zh/oss/developer-reference/include-signatures-in-the-authorization-header#section-i74-k35-5w4)
 pub fn oss_file_md5<'a>(file: &'a str) -> Result<String, io::Error> {
     let mut file = File::open(file)?;
-    let mut hasher = Md5::new();
-    let mut buffer = [0; 1024];
-    loop {
-        let bytes_read = file.read(&mut buffer)?;
-        if bytes_read == 0 {
-            break;
+
+    let digest = chksum_md5::chksum(file).map_err(|e|{
+        match e {
+            Error::IsTerminal => {
+                io::Error::new(io::ErrorKind::Other, "IsTerminal")
+            }
+            Error::Io(io_err) => {
+                io_err
+            }
         }
-        hasher.input(&buffer[..bytes_read]);
-    }
-    let bytes = hex::decode(&hasher.result_str()).unwrap();
-    Ok(general_purpose::STANDARD.encode(&bytes))
+    })?;
+
+    Ok(general_purpose::STANDARD.encode(digest.as_bytes()))
 }
 
 pub fn oss_md5<'a>(content: &'a [u8]) -> Result<String, io::Error> {
-    let mut hasher = Md5::new();
-    hasher.input(content);
-    let bytes = hex::decode(&hasher.result_str()).unwrap();
-    Ok(general_purpose::STANDARD.encode(&bytes))
+
+    let digest = chksum_md5::chksum(content).map_err(|e|{
+        match e {
+            Error::IsTerminal => {
+                io::Error::new(io::ErrorKind::Other, "IsTerminal")
+            }
+            Error::Io(io_err) => {
+                io_err
+            }
+        }
+    })?;
+    // let mut hasher = Md5::new();
+    // hasher.input(content);
+    // let bytes = hex::decode(&hasher.result_str()).unwrap();
+    Ok(general_purpose::STANDARD.encode(digest.as_bytes()))
 }
 
 /// 获取字节范围描述

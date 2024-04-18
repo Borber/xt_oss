@@ -11,7 +11,7 @@ pub mod builders {
     };
 
     pub struct PutObjectTaggingBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
         tags: Vec<(&'a str, &'a str)>,
@@ -82,7 +82,7 @@ pub mod builders {
     }
 
     pub struct GetObjectTaggingbuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
     }
@@ -122,7 +122,7 @@ pub mod builders {
     }
 
     pub struct DeleteObjectTaggingBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
     }
@@ -166,13 +166,13 @@ pub mod builders {
 
 /// # 标签`Tagging`
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用PutObjectTagging接口设置或更新对象`Object`的标签`Tagging`信息。
     /// 对象标签使用一组键值对`Key-Value`标记对象。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putobjecttagging)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_tag_put.rs)
-    pub fn PutObjectTagging(&self, object: &'a str) -> PutObjectTaggingBuilder {
+    pub fn PutObjectTagging<'a>(&'a self, object: &'a str) -> PutObjectTaggingBuilder {
         PutObjectTaggingBuilder::new(self, object)
     }
 
@@ -180,7 +180,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/getobjecttagging)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_tag_get.rs)
-    pub fn GetObjectTagging(&self, object: &'a str) -> GetObjectTaggingbuilder {
+    pub fn GetObjectTagging<'a>(&'a self, object: &'a str) -> GetObjectTaggingbuilder {
         GetObjectTaggingbuilder::new(&self, object)
     }
 
@@ -188,7 +188,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/deleteobjecttagging)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_tag_del.rs)
-    pub fn DeleteObjectTagging(&self, object: &'a str) -> DeleteObjectTaggingBuilder {
+    pub fn DeleteObjectTagging<'a>(&'a self, object: &'a str) -> DeleteObjectTaggingBuilder {
         DeleteObjectTaggingBuilder::new(self, object)
     }
 }

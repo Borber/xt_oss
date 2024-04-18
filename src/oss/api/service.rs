@@ -34,7 +34,7 @@ pub mod builders {
 
     #[derive(Debug)]
     pub struct ListBucketsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         resource_group_id: Option<&'a str>,
         query: ListBucketsQuery<'a>,
     }
@@ -107,7 +107,7 @@ pub mod builders {
 
 #[allow(non_snake_case)]
 /// 关于Region操作
-impl<'a> Client<'a> {
+impl Client {
     /// 调用ListBuckets（GetService）接口列举请求者拥有的所有存储空间（Bucket）。
     /// 您还可以通过设置prefix、marker或者max-keys参数列举满足指定条件的存储空间。
     ///

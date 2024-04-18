@@ -50,7 +50,7 @@ pub mod builders {
     }
 
     pub struct InitiateMultipartUploadBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         encoding_type: Option<&'a str>,
         headers: InitiateMultipartUploadBuilderHeaders<'a>,
@@ -211,7 +211,7 @@ pub mod builders {
     }
 
     pub struct UploadPartBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         part_number: u32,
         upload_id: &'a str,
@@ -275,7 +275,7 @@ pub mod builders {
     }
 
     pub struct UploadPartCopyBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> UploadPartCopyBuilder<'a> {
@@ -297,7 +297,7 @@ pub mod builders {
     }
 
     pub struct CompleteMultipartUploadBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         forbid_overwrite: Option<bool>,
         query: CompleteMultipartUploadBuilderQuery<'a>,
@@ -363,7 +363,7 @@ pub mod builders {
     }
 
     pub struct AbortMultipartUploadBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         upload_id: &'a str,
     }
@@ -424,7 +424,7 @@ pub mod builders {
     }
 
     pub struct ListMultipartUploadsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         query: ListMultipartUploadsBuilderQuery<'a>,
     }
 
@@ -504,7 +504,7 @@ pub mod builders {
     }
 
     pub struct ListPartsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         query: ListPartsBuilderQuery<'a>,
     }
@@ -567,13 +567,13 @@ pub mod builders {
 
 /// 基础操作
 #[allow(non_snake_case)]
-impl<'a> Client<'a> {
+impl Client {
     /// 使用Multipart Upload模式传输数据前,您必须先调用InitiateMultipartUpload接口来通知OSS初始化一
     /// 个Multipart Upload事件。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/initiatemultipartupload)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_mutil_init.rs)
-    pub fn InitiateMultipartUpload(&self, object: &'a str) -> InitiateMultipartUploadBuilder {
+    pub fn InitiateMultipartUpload<'a>(&'a self, object: &'a str) -> InitiateMultipartUploadBuilder {
         InitiateMultipartUploadBuilder::new(self, object)
     }
 
@@ -581,7 +581,7 @@ impl<'a> Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/uploadpart)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_mutil_upload_part.rs)
-    pub fn UploadPart(&self, object: &'a str) -> UploadPartBuilder {
+    pub fn UploadPart<'a>(&'a self, object: &'a str) -> UploadPartBuilder {
         UploadPartBuilder::new(self, object)
     }
 
@@ -598,7 +598,7 @@ impl<'a> Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/completemultipartupload)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_mutil_comp.rs)
-    pub fn CompleteMultipartUpload(&self, object: &'a str) -> CompleteMultipartUploadBuilder {
+    pub fn CompleteMultipartUpload<'a>(&'a self, object: &'a str) -> CompleteMultipartUploadBuilder {
         CompleteMultipartUploadBuilder::new(self, object)
     }
 
@@ -606,7 +606,7 @@ impl<'a> Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/abortmultipartupload)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_mutil_abort.rs)
-    pub fn AbortMultipartUpload(&self, object: &'a str) -> AbortMultipartUploadBuilder {
+    pub fn AbortMultipartUpload<'a>(&'a self, object: &'a str) -> AbortMultipartUploadBuilder {
         AbortMultipartUploadBuilder::new(self, object)
     }
 
@@ -623,7 +623,7 @@ impl<'a> Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/listparts)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_mutil_list_part.rs)
-    pub fn ListParts(&self, object: &'a str) -> ListPartsBuilder {
+    pub fn ListParts<'a>(&'a self, object: &'a str) -> ListPartsBuilder {
         ListPartsBuilder::new(self, object)
     }
 }

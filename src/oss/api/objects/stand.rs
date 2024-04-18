@@ -64,7 +64,7 @@ pub mod builders {
     }
 
     pub struct PutObjectBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         content: oss::Bytes,
         headers: PutObjectBuilderHeaders<'a>,
@@ -305,7 +305,7 @@ pub mod builders {
 
     #[derive(Debug, Clone)]
     pub struct CopyObjectBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         headers: CopyObjectBuilderHeaders<'a>,
     }
@@ -515,7 +515,7 @@ pub mod builders {
     }
 
     pub struct AppendObjectBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: String,
         position: usize,
         content: oss::Bytes,
@@ -708,7 +708,7 @@ pub mod builders {
 
     #[derive(Debug)]
     pub struct GetObjectBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         range: Option<ByteRange>,
         modified_since: Option<DateTime<Utc>>,
@@ -861,7 +861,7 @@ pub mod builders {
 
     #[derive(Debug)]
     pub struct DeleteObjectBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
     }
@@ -904,7 +904,7 @@ pub mod builders {
 
     #[allow(unused)]
     pub struct DeleteMultipleObjectsBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         quiet: Option<bool>,
         encoding_type: Option<&'a str>,
         deletes: Vec<(&'a str, &'a str)>,
@@ -999,7 +999,7 @@ pub mod builders {
     }
 
     pub struct HeadObjectBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
         modified_since: Option<DateTime<Utc>>,
@@ -1096,7 +1096,7 @@ pub mod builders {
     }
 
     pub struct GetObjectMetaBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
     }
@@ -1143,7 +1143,7 @@ pub mod builders {
     }
 
     pub struct RestoreObjectBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         object: &'a str,
         version_id: Option<&'a str>,
         days: Option<u8>,
@@ -1211,12 +1211,12 @@ pub mod builders {
 
 /// # 基础操作
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用PutObject接口上传文件`Object`
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putobject)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_stand_put.rs)
-    pub fn PutObject(&self, object: &'a str) -> PutObjectBuilder {
+    pub fn PutObject<'a>(&'a self, object: &'a str) -> PutObjectBuilder {
         PutObjectBuilder::new(self, object)
     }
 
@@ -1224,7 +1224,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/getobject)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_stand_get.rs)
-    pub fn GetObject(&self, object: &'a str) -> GetObjectBuilder {
+    pub fn GetObject<'a>(&'a self, object: &'a str) -> GetObjectBuilder {
         GetObjectBuilder::new(self, object)
     }
 
@@ -1232,7 +1232,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/copyobject)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_stand_copy.rs)
-    pub fn CopyObject(&self, object: &'a str) -> CopyObjectBuilder {
+    pub fn CopyObject<'a>(&'a self, object: &'a str) -> CopyObjectBuilder {
         CopyObjectBuilder::new(self, object)
     }
 
@@ -1240,7 +1240,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/appendobject)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_stand_append.rs)
-    pub fn AppendObject(&self, object: &'a str) -> AppendObjectBuilder {
+    pub fn AppendObject<'a>(&'a self, object: &'a str) -> AppendObjectBuilder {
         AppendObjectBuilder::new(self, object)
     }
 
@@ -1248,7 +1248,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/deleteobject)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_stand_del.rs)
-    pub fn DeleteObject(&self, object: &'a str) -> DeleteObjectBuilder {
+    pub fn DeleteObject<'a>(&'a self, object: &'a str) -> DeleteObjectBuilder {
         DeleteObjectBuilder::new(self, object)
     }
 
@@ -1264,7 +1264,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/headobject)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_stand_head.rs)
-    pub fn HeadObject(&self, object: &'a str) -> HeadObjectBuilder {
+    pub fn HeadObject<'a>(&'a self, object: &'a str) -> HeadObjectBuilder {
         HeadObjectBuilder::new(self, object)
     }
 
@@ -1273,7 +1273,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/getobjectmeta)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_stand_meta.rs)
-    pub fn GetObjectMeta(&self, object: &'a str) -> GetObjectMetaBuilder {
+    pub fn GetObjectMeta<'a>(&'a self, object: &'a str) -> GetObjectMetaBuilder {
         GetObjectMetaBuilder::new(self, object)
     }
 
@@ -1281,7 +1281,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/restoreobject)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_object_stand_restore.rs)
-    pub fn RestoreObject(&self, object: &'a str) -> RestoreObjectBuilder {
+    pub fn RestoreObject<'a>(&'a self, object: &'a str) -> RestoreObjectBuilder {
         RestoreObjectBuilder::new(self, object)
     }
 }

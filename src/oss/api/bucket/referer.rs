@@ -12,7 +12,7 @@ pub mod builders {
 
     #[derive(Debug)]
     pub struct PutBucketRefererBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         config: RefererConfiguration,
     }
 
@@ -55,7 +55,7 @@ pub mod builders {
     }
 
     pub struct GetBucketRefererBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketRefererBuilder<'a> {
@@ -82,7 +82,7 @@ pub mod builders {
 
 /// # 防盗链`Referer``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用PutBucketReferer接口设置存储空间`Bucket`级别的Referer访问白名单以及黑名单
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putbucketreferer)

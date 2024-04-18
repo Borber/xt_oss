@@ -16,7 +16,7 @@ pub mod builders {
 
     #[allow(unused)]
     pub struct PutBucketEncryptionBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         algorithm: SSEAlgorithm,
         data_encryption: Option<&'a str>,
         master_key_id: Option<&'a str>,
@@ -78,7 +78,7 @@ pub mod builders {
     }
 
     pub struct GetBucketEncryptionBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketEncryptionBuilder<'a> {
@@ -103,7 +103,7 @@ pub mod builders {
     }
 
     pub struct DeleteBucketEncryptionBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> DeleteBucketEncryptionBuilder<'a> {
@@ -131,7 +131,7 @@ pub mod builders {
 
 /// # 加密（Encryption）
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// PutBucketEncryption接口用于配置存储空间`Bucket`的加密规则。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putbucketencryption)

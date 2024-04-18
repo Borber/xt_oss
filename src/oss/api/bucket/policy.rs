@@ -10,7 +10,7 @@ pub mod builders {
     };
 
     pub struct PutBucketPolicyBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         policy: &'a str,
     }
 
@@ -49,7 +49,7 @@ pub mod builders {
     }
 
     pub struct GetBucketPolicyBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> GetBucketPolicyBuilder<'a> {
@@ -75,7 +75,7 @@ pub mod builders {
     }
 
     pub struct DeleteBucketPolicyBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> DeleteBucketPolicyBuilder<'a> {
@@ -104,7 +104,7 @@ pub mod builders {
 
 /// # 授权策略`Policy`
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// PutBucketPolicy接口用于为指定的存储空间`Bucket`设置授权策略`Policy`。
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/putbucketpolicy)

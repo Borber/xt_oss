@@ -13,7 +13,7 @@ use std::{
 use xt_oss::prelude::*;
 
 async fn append_upload<'a>(
-    client: &'a oss::Client<'a>,
+    client: &'a oss::Client,
     object: &'a str,
     position: usize,
     data: oss::Bytes,

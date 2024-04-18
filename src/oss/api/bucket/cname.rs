@@ -15,7 +15,7 @@ pub mod builders {
     };
 
     pub struct CreateCnameTokenBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         cname: &'a str,
     }
 
@@ -56,7 +56,7 @@ pub mod builders {
     }
 
     pub struct GetCnameTokenBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         cname: &'a str,
     }
 
@@ -87,7 +87,7 @@ pub mod builders {
     }
 
     pub struct PutCnameBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         bucket_cname_configuration: BucketCnameConfiguration,
     }
 
@@ -130,7 +130,7 @@ pub mod builders {
     }
 
     pub struct ListCnameBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
     }
 
     impl<'a> ListCnameBuilder<'a> {
@@ -156,7 +156,7 @@ pub mod builders {
     }
 
     pub struct DeleteCnameBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         cname: &'a str,
     }
 
@@ -196,12 +196,12 @@ pub mod builders {
 
 /// # 自定义域名`CNAME``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// 调用CreateCnameToken接口创建域名所有权验证所需的CnameToken
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/createcnametoken)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_bucket_cname_create_token.rs)
-    pub fn CreateCnameToken(&self, cname: &'a str) -> CreateCnameTokenBuilder<'_> {
+    pub fn CreateCnameToken<'a>(&'a self, cname: &'a str) -> CreateCnameTokenBuilder<'_> {
         CreateCnameTokenBuilder::new(self, cname)
     }
 
@@ -209,7 +209,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/getcnametoken)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_bucket_cname_get_token.rs)
-    pub fn GetCnameToken(&self, cname: &'a str) -> GetCnameTokenBuilder<'_> {
+    pub fn GetCnameToken<'a>(&'a self, cname: &'a str) -> GetCnameTokenBuilder<'_> {
         GetCnameTokenBuilder::new(self, cname)
     }
 
@@ -233,7 +233,7 @@ impl<'a> oss::Client<'a> {
     ///
     /// - [official docs](https://help.aliyun.com/zh/oss/developer-reference/deletecname)
     /// - [xtoss example](https://github.com/isme-sun/xt_oss/blob/main/examples/api_bucket_cname_del.rs)
-    pub fn DeleteCname(&self, cname: &'a str) -> DeleteCnameBuilder<'_> {
+    pub fn DeleteCname<'a>(&'a self, cname: &'a str) -> DeleteCnameBuilder<'_> {
         DeleteCnameBuilder::new(self, cname)
     }
 }

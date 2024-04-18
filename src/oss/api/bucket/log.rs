@@ -13,7 +13,7 @@ pub mod builders {
     };
 
     pub struct PutBucketLoggingBuilder<'a> {
-        client: &'a oss::Client<'a>,
+        client: &'a oss::Client,
         enabled: Option<bool>,
         bucket: Option<&'a str>,
         target_prefix: Option<&'a str>,
@@ -86,7 +86,7 @@ pub mod builders {
     }
 
     pub struct GetBucketLoggingBuilder<'a> {
-        pub client: &'a oss::Client<'a>,
+        pub client: &'a oss::Client,
     }
 
     impl<'a> GetBucketLoggingBuilder<'a> {
@@ -111,7 +111,7 @@ pub mod builders {
     }
 
     pub struct DeleteBucketLoggingBuilder<'a> {
-        pub client: &'a oss::Client<'a>,
+        pub client: &'a oss::Client,
     }
 
     impl<'a> DeleteBucketLoggingBuilder<'a> {
@@ -139,7 +139,7 @@ pub mod builders {
 
 /// # 日志管理`Logging``
 #[allow(non_snake_case)]
-impl<'a> oss::Client<'a> {
+impl oss::Client {
     /// PutBucketLogging接口用于为存储空间`Bucket`开启日志转存功能，
     /// 可将OSS的访问日志按照固定命名规则,以小时为单位生成日志文件写入您
     /// 指定的Bucket。
