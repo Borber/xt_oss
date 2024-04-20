@@ -19,6 +19,7 @@ impl<'a> SingerV1<'a> {
         format!("OSS {}:{}", self.access_key_id, self.signature())
     }
 
+
     fn headers_str(&self) -> String {
         // dbg!(self.headers);
         let mut oss_key_name: Vec<&str> = self
@@ -45,7 +46,8 @@ impl<'a> SingerV1<'a> {
         value.join("")
     }
 
-    fn signature(&self) -> String {
+    /// 获取签名
+    pub(super) fn signature(&self) -> String {
         let header_str = self.headers_str();
         let content_type = match self.headers.get(CONTENT_TYPE) {
             Some(content_type) => content_type.to_str().unwrap(),

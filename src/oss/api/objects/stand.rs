@@ -10,6 +10,7 @@ use self::builders::{
 pub mod builders {
 
     use std::collections::HashMap;
+    use std::time::Duration;
 
     use chrono::{DateTime, Utc};
     use oss::http::{
@@ -40,6 +41,7 @@ pub mod builders {
         },
         util::oss_md5,
     };
+    use crate::oss::auth;
 
     #[derive(Debug, Default)]
     struct PutObjectBuilderHeaders<'a> {
@@ -832,6 +834,41 @@ pub mod builders {
                 insert_header(&mut headers, ACCEPT_ENCODING, accept_encoding);
             }
             headers
+        }
+
+        /// 获取临时的 url 签名
+        pub fn url_signature(&self, time:Duration) ->String{
+            let mut res = format!("/{}/{}", self.client.bucket(), self.object);
+            let mut url = self.client.object_url(self.object);
+            let query = self.query();
+            if !query.is_empty() {
+                res = format!("{}?{}", res, query);
+                url = format!("{}?{}", url, query)
+            }
+
+            let access_key_id = self.client.options.access_key_id.as_str();
+            let access_key_secret = self.client.options.access_key_secret.as_str();
+            let sts_token = self.client.options.sts_token.as_ref().map(|i|i.as_str());
+
+            let mut headers = http::HeaderMap::default();
+            headers.insert(http::header::CONTENT_TYPE, "".parse().unwrap());
+            let method = http::Method::GET;
+            let expires = Utc::now().timestamp() as u64 + time.as_secs();
+            let expires = expires.to_string();
+            let signature = auth::SingerV1 {
+                access_key_id,
+                access_key_secret,
+                sts_token,
+                headers: &headers,
+                method: &method,
+                date: &expires,
+                resourse:Some(res.as_str()),
+            }.signature();
+
+            let signature = urlencoding::encode(&signature);
+            let url = format!("{}?OSSAccessKeyId={}&Expires={}&Signature={}",url,access_key_id,expires,signature);
+
+            url
         }
 
         pub async fn execute(&self) -> api::ApiResult<Bytes> {

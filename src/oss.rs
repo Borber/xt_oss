@@ -170,7 +170,7 @@ pub struct Options {
     /// 通过阿里云控制台创建的AccessKey Secret
     access_key_secret: String,
     /// 使用临时授权方式
-    sts_token: String,
+    sts_token: Option<String>,
     /// 通过控制台或PutBucket创建的Bucket
     bucket: String,
     /// OSS访问域名。
@@ -229,7 +229,7 @@ impl Options {
     }
 
     pub fn with_sts_token<T: Into<String>>(mut self, value: T) -> Self {
-        self.sts_token = value.into();
+        self.sts_token = Some(value.into());
         self
     }
 
@@ -344,7 +344,7 @@ impl Client {
         let request = self::Request::new()
             .with_access_key_id(&options.access_key_id)
             .with_access_key_secret(options.access_key_secret.as_str())
-            .with_sts_token((!options.sts_token.is_empty()).then_some(options.sts_token.as_str()));
+            .with_sts_token(options.sts_token.as_ref());
         Self { options, request }
     }
 

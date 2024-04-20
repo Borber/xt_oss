@@ -125,6 +125,18 @@ pub fn options_from_env() -> oss::Options {
 ///
 /// [doc](https://help.aliyun.com/zh/oss/developer-reference/include-signatures-in-the-authorization-header#section-i74-k35-5w4)
 pub fn oss_file_md5<'a>(file: &'a str) -> Result<String, io::Error> {
+    /*let mut file = File::open(file)?;
+    let mut hasher = Md5::new();
+    let mut buffer = [0; 1024];
+    loop {
+        let bytes_read = file.read(&mut buffer)?;
+        if bytes_read == 0 {
+            break;
+        }
+        hasher.input(&buffer[..bytes_read]);
+    }
+    let bytes = hex::decode(&hasher.result_str()).unwrap();
+    Ok(general_purpose::STANDARD.encode(&bytes))*/
     let mut file = File::open(file)?;
 
     let digest = chksum_md5::chksum(file).map_err(|e|{
@@ -142,6 +154,10 @@ pub fn oss_file_md5<'a>(file: &'a str) -> Result<String, io::Error> {
 }
 
 pub fn oss_md5<'a>(content: &'a [u8]) -> Result<String, io::Error> {
+    /*let mut hasher = Md5::new();
+    hasher.input(content);
+    let bytes = hex::decode(&hasher.result_str()).unwrap();
+    Ok(general_purpose::STANDARD.encode(&bytes))*/
 
     let digest = chksum_md5::chksum(content).map_err(|e|{
         match e {
